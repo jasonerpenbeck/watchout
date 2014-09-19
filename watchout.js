@@ -16,6 +16,24 @@ for(var i=0; i < enemyCount; i++) {
   enemyArr.push(new Enemy(randomCX,randomCY));
 }
 
+var update = function() {
 
+var newXY = [];
+for(var i=0; i < enemyCount; i++) {
+  randomCX = Math.max(enemySize, Math.random() * board.attr('width') - enemySize);
+  randomCY = Math.max(enemySize, Math.random() * board.attr('height') - enemySize);
+  newXY.push([randomCX,randomCY]);
+}
+// console.log(newXY);
 
+d3.selectAll('circle').data(newXY)
+  .transition()
+    .duration(1500)
+    .attr('cx',function(d) {return d[0];})
+    .attr('cy',function(d) {return d[1];});
+
+}
+
+update();
+setInterval(update,1500);
 
