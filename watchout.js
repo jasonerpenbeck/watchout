@@ -1,8 +1,11 @@
 // start slingin' some d3 here.
 
-var enemyCount = 10;
+var playerScore = 0;
+var highScore = 0;
+var enemyCount = 25;
 var enemySize = 10;
 var playerSize = 12;
+var collisions = 0;
 var container = d3.select("body").append("svg").attr('width', 800).attr('height',600);
 var board =  container.append('rect').attr('width',750).attr('height',550).attr('fill', 'coral');
 
@@ -25,7 +28,6 @@ var player = new Player();
 var Enemy = function(cx,cy) {
   this.node = container.append('circle').attr('fill','green').attr('r',enemySize).attr('cx',cx).attr('cy',cy).attr('class','enemy');
 }
-
 
 for(var i=0; i < enemyCount; i++) {
   randomCX = Math.max(enemySize, Math.random() * board.attr('width') - enemySize);
@@ -55,7 +57,6 @@ var checkCollision = function(){
   // keep track of the distance between our player and each enemy
     // this will result in 20 values
   var radiusSum = enemySize + playerSize;
-  var collision = false;
 
   d3.selectAll('.enemy').each(function(d,i) {
     var x = this.getAttribute('cx');
@@ -64,7 +65,12 @@ var checkCollision = function(){
 
     if(distance < radiusSum) {
       console.log('COLLISION');
-      collision = true;
+      // collisions++;
+      // document.getElementById('collisionSpan').innerHTML = collisions;
+      highScore = Math.max(playerScore, highScore);
+      document.getElementById('highSpan').innerHTML = highScore;
+      document.getElementById('currentSpan').innerHTML = 0;
+      playerScore = 0;
     }
   });
 }
@@ -101,8 +107,6 @@ var drag = d3.behavior.drag()
   })
   .on('dragend', function() {
     console.log('DRAG ENDS');
-    console.log(player.x,' | ',player.y);
-
   })
 
 ;
@@ -110,5 +114,9 @@ var drag = d3.behavior.drag()
 d3.selectAll('.draggable').call(drag);
 
 update();
+setInterval(function(){
+  playerScore++;
+  document.getElementById('currentSpan').innerHTML = playerScore;
+}, 50);
 setInterval(checkCollision,1);
 setInterval(update,2500);
